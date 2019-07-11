@@ -1,0 +1,22 @@
+{
+        "name": "atk14/core",
+        "type": "library",
+        "description": "Core libraries of the ATK14 Framework",
+        "keywords": ["atk14"],
+        "homepage": "https://github.com/atk14/Atk14Core",
+        "license": ["MIT"],
+        "authors": [
+                {
+                        "name": "ATK14 Development Team",
+                        "homepage": "https://github.com/orgs/atk14/people"
+                }
+        ],
+        "require": {
+                "php": ">=5.3.0"
+        },
+        "require-dev": {
+        },
+        "autoload": {
+                "classmap": ["src"]
+        }
+}

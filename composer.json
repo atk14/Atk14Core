@@ -17,6 +17,7 @@
         "require-dev": {
         },
         "autoload": {
-                "classmap": ["src"]
+                "classmap": ["src"],
+								"files": ["src/atk14_smarty_utils.php"]
         }
 }

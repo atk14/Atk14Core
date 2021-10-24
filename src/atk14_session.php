@@ -10,12 +10,12 @@
  *
  * Usage in controller:
  * ```
- *	$this->session->setValue("user_id",123);
- *	$this->session->getValue("user_id");
- *	$this->session->clearValue("user_id");
- *	if($this->session->defined("user_id")){
- *			//...
- *	}
+ * $this->session->setValue("user_id",123);
+ * $this->session->getValue("user_id");
+ * $this->session->clearValue("user_id");
+ * if($this->session->defined("user_id")){
+ * 		//...
+ * }
  * ```
  *
  * @package Atk14\Core
@@ -77,18 +77,21 @@ class Atk14Session{
 	 *
 	 * @param string $name
 	 * @param mixed $value
+	 * @param int $expiration number of seconds after which the value expires
 	 */
-	function setValue($name,$value){
-		$this->_SessionStorer->writeValue($name,$value);
+	function setValue($name,$value,$expiration=null){
+		$this->_SessionStorer->writeValue($name,$value, $expiration);
 	}
 
 	/**
 	 * Alias to method {@link setValue()}
 	 *
+	 * {@see SessionStorer->writeValue()}
 	 * @param string $name
 	 * @param mixed $value
+	 * @param int $expiration number of seconds after which the value expires
 	 */
-	function s($name,$value){ return $this->setValue($name,$value); }
+	function s($name,$value,$expiration=null){ return $this->setValue($name,$value,$expiration); }
 
 	/**
 	 * Get value from a session

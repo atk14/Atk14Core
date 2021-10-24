@@ -37,11 +37,35 @@
 class Atk14Migration{
 
 	/**
+	 *
+	 * @var string
+	 */
+	var $version;
+
+	/**
+	 *
+	 * @var DbMole
+	 */
+	var $dbmole;
+
+	/**
+	 *
+	 * @var Logger
+	 */
+	var $logger;
+
+	/**
+	 *
+	 * @var boolean
+	 */
+	protected $_failed;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $version Migration file
 	 */
-	function Atk14Migration($version){
+	function __construct($version){
 		$this->version = $version;
 		$this->dbmole = &$GLOBALS["dbmole"];
 		$this->_failed = false;
@@ -55,10 +79,14 @@ class Atk14Migration{
 	 * @return logger
 	 */
 	static function &GetLogger(){
+		global $ATK14_GLOBAL;
 		static $logger;
+
 		if(!isset($logger)){
 			$logger = new logger("migration",array(
 				"log_to_stdout" => true,
+				"log_to_file" => true,
+				"default_log_file" => $ATK14_GLOBAL->getDocumentRoot()."/log/".(TEST ? "test_migration.log" : "migration.log")
 			));
 		}
 		return $logger;

@@ -95,7 +95,7 @@ class Atk14SmartyBase extends Smarty{
 
 	function getTemplateVars($key = null){
 		if(isset($key)){
-			return $this->_tpl_vars[$key];
+			return isset($this->_tpl_vars[$key]) ? $this->_tpl_vars[$key] : null;
 		}
 		return $this->_tpl_vars;
 	}
@@ -106,5 +106,10 @@ class Atk14SmartyBase extends Smarty{
 
 	function templateExists($template){
 		return $this->template_exists($template);
+	}
+
+	function setErrorReporting($error_reporting){
+		// There is no method setErrorReporting in Smarty2.
+		// Just don't do anything.
 	}
 }

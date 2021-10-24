@@ -104,7 +104,7 @@ class Atk14Robot{
 		global $ATK14_GLOBAL;
 
 		if(!$this->default_log_file){
-			$this->default_log_file = $ATK14_GLOBAL->getApplicationPath()."/../log/robots.log";
+			$this->default_log_file = $ATK14_GLOBAL->getDocumentRoot()."/log/robots.log";
 		}
 		
 		$this->dbmole = &$GLOBALS["dbmole"];
@@ -167,6 +167,9 @@ class Atk14Robot{
 		elseif($bytes>1024){ $bytes = number_format($bytes/1024,2,".",",")."kB"; }
 		else{ $bytes = "$bytes Bytes"; }
 		$msg = "real peak memory usage: ".$bytes;
+		if($this->dbmole){
+			$msg .= ", total queries executed: ".$this->dbmole->getQueriesExecuted();
+		}
 
 		$this->logger->stop($msg);
 		$this->logger->flush_all();

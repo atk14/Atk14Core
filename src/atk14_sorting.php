@@ -51,7 +51,7 @@
  * ```
  * @package Atk14\Core
  */
-class Atk14Sorting implements ArrayAccess, IteratorAggregate {
+class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 
 	/**
 	 * Stored parameters from constructor.
@@ -130,8 +130,18 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate {
 		if(is_string($options_or_asc_ordering)){
 			$asc_ordering = $options_or_asc_ordering;
 			if(!isset($desc_ordering)){
-				$desc_ordering = preg_replace('/\sASC$/i','',$asc_ordering);
-				$desc_ordering .= " DESC"; // TOTO: "name ASC, author ASC" -> "name DESC, author DESC"
+				$desc_ordering = trim($asc_ordering);
+
+				$uniqid = uniqid();
+				$desc_ordering = preg_replace('/\bASC\b/i',"DESC$uniqid",$desc_ordering);
+				$desc_ordering = preg_replace('/\bDESC\b/i',"ASC$uniqid",$desc_ordering);
+				$desc_ordering = strtr($desc_ordering,array(
+					"DESC$uniqid" => "DESC",
+					"ASC$uniqid" => "ASC",
+				));
+				if(!preg_match('/\b(ASC|DESC)$/i',$desc_ordering)){
+					$desc_ordering .= " DESC"; // "name" -> "name DESC"
+				}
 			}
 		}
 
@@ -293,5 +303,14 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate {
 		unset($this->_OrderingStrings["$key"]);
 		unset($this->_OrderingStrings["$key-asc"]);
 		unset($this->_OrderingStrings["$key-dec"]);
+	}
+
+	/**
+	 * Return the number of possible sort options.
+	 * > echo count($sorting);
+	 * > echo $sorting->count();
+	 **/
+	function count() {
+		return count($this->_Ordering);
 	}
 }

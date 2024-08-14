@@ -37,7 +37,14 @@
  *
  * Example of the parameter items_total_label usage:
  * ```
- * {paginator items_total_label="article total"}
+ * {paginator items_total_label="articles total"}
+ *
+ * {paginator items_total_label=""} {* no total amount information will be displayed *}
+ * ```
+ *
+ * The anchor of the list beginning can be also specified:
+ * ```
+ * {paginator anchor=list_table}
  * ```
  *
  * @package Atk14\Helpers
@@ -55,8 +62,14 @@ function smarty_function_paginator($params,$template){
 	$smarty = atk14_get_smarty_from_template($template);
 
 	$params += array(
-		"items_total_label" => _("items total"), // "articles", "products"...
+		"items_total_label" => _("items total"), // "articles total", "products total"...; if set to "", no information about the total amount will be displayed
+		"anchor" => "", // e.g "list_table", "#list_table"
 	);
+
+	$anchor = $params["anchor"];
+	if($anchor && !preg_match("/^#/",$anchor)){
+		$anchor = "#$anchor";
+	}
 
 	if(isset($params["finder"])){
 		$finder = $params["finder"];
@@ -66,14 +79,16 @@ function smarty_function_paginator($params,$template){
 
 	if(isset($finder)){
 		$total_amount = $finder->getTotalAmount();
-		$max_amount = $finder->getLimit();
+		$max_amount = method_exists($finder,"getPageSize") ? $finder->getPageSize() : $finder->getLimit(); // e.g. "20"
+		$limit = $finder->getLimit(); // e.g. "20", "40", "60"...
 	}else{
 		$total_amount = isset($params["total_amount"]) ? (int)$params["total_amount"] : (int)$smarty->getTemplateVars("total_amount");
 		$max_amount = isset($params["max_amount"]) ? (int)$params["max_amount"] : (int)$smarty->getTemplateVars("max_amount");
+		$limit = $max_amount;
 	}
 	if($max_amount<=0){ $max_amount = 50; } // defaultni hodnota - nesmi dojit k zacykleni smycky while
 
-	$_from = defined("ATK14_PAGINATOR_OFFSET_PARAM_NAME") ? ATK14_PAGINATOR_OFFSET_PARAM_NAME : "from";
+	$_from = defined("ATK14_PAGINATOR_OFFSET_PARAM_NAME") ? constant("ATK14_PAGINATOR_OFFSET_PARAM_NAME") : "from";
 	$from_name = isset($params["$_from"]) ? $params["$_from"] : "$_from";
 
 	$items_total_label = $params["items_total_label"];
@@ -84,7 +99,10 @@ function smarty_function_paginator($params,$template){
 	foreach(array("action","controller","lang","namespace") as $_k){
 		if(isset($params[$_k])){ $par[$_k] = $params["action"]; }
 	}
-	
+
+	$_count = defined("ATK14_PAGINATOR_COUNT_PARAM_NAME") ? constant("ATK14_PAGINATOR_COUNT_PARAM_NAME") : "count";
+	unset($par["$_count"]);
+
 	$from = isset($par["$from_name"]) ? (int)$par["$from_name"] : 0;
 	if($from<0){ $from = 0;}
 
@@ -98,7 +116,7 @@ function smarty_function_paginator($params,$template){
 		$symbol_right = '<i class="fas fa-chevron-right"></i>';
 		$label_left = "<span class=\"sr-only\">$label_left</span>";
 		$label_right = "<span class=\"sr-only\">$label_right</span>";
-	}elseif(!USING_BOOTSTRAP4){
+	}elseif(USING_BOOTSTRAP3){
 		// Perhaps Bootstrap 3, but who knows... Rather to not hide labels.
 		$symbol_left = '<i class="glyphicon glyphicon-chevron-left"></i>';
 		$symbol_right = '<i class="glyphicon glyphicon-chevron-right"></i>';
@@ -107,7 +125,7 @@ function smarty_function_paginator($params,$template){
 	$out = array();
 
 	if($total_amount<=$max_amount){
-		if($total_amount>=5){
+		if($total_amount>=5 && $items_total_label){
 			$out[] = "<div class=\"pagination-container\">";
 			$out[] = "<p><span class=\"badge badge-secondary\">".$total_amount."</span> ".$items_total_label."</p>";
 			$out[] = "</div>";
@@ -123,7 +141,7 @@ function smarty_function_paginator($params,$template){
 	if($from>0){
 		$par["$from_name"] = $from - $max_amount;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
-		$out[] = "<li class=\"page-item first-child prev\"><a class=\"page-link\" href=\"$url\" rel=\"nofollow\">$symbol_left $label_left</span></a></li>";
+		$out[] = "<li class=\"page-item first-child prev\"><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$symbol_left $label_left</span></a></li>";
 		$first_child = false;
 	}
 
@@ -135,7 +153,14 @@ function smarty_function_paginator($params,$template){
 		$par["$from_name"] = $cur_from;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
 		$_class = array( "page-item" );
-		$cur_from==$from && ($_class[] = "active");
+
+		// more items can be active
+		if(
+			$cur_from==$from ||
+			($cur_from>$from && $cur_from<$from+$limit)
+		){
+			$_class[] = "active";
+		}
 		$first_child && ($_class[] = "first-child") && ($first_child = false);
 
 		if($steps==$current_step && $screen==$current_step){
@@ -145,35 +170,54 @@ function smarty_function_paginator($params,$template){
 		$_class = $_class ? " class=\"".join(" ",$_class)."\"" : "";
 
 		if($cur_from==$from){
-			$out[] = "<li$_class><a class=\"page-link\" href=\"$url\" rel=\"nofollow\">$screen</a></li>";
+			$out[] = "<li$_class><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$screen</a></li>";
 		}else{
-			$out[] = "<li$_class><a class=\"page-link\" href=\"$url\" rel=\"nofollow\">$screen</a></li>";
+			$out[] = "<li$_class><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$screen</a></li>";
 		}
 		$screen++;
 		
 		// skipped items ...
-		if($screen>2 && $current_step>6 && $screen<$current_step-4 && $screen<$steps-10){
-			$out[] = "<li class=\"page-item skip disabled\"><span class=\"page-link\">&hellip;</span></li>";
-			while($screen<$current_step-4 && $screen<$steps-10){ $screen++; }
-		}
-		
-		if($screen>$current_step+4 && $steps-$screen>=2 && $screen>11){
-			$out[] = "<li class=\"page-item skip disabled\"><span class=\"page-link\">&hellip;</span></li>";
-			while(($steps-$screen)>=2){ $screen++; }
+		$at_begining = 1; // def. 2
+		$steps_before_current = 2; // def. 4
+		$at_end = 1; // def. 2
+		$steps_after_current = (ceil($limit / $max_amount) - 1) + 2; // def. 4
+		//
+		if($steps > ($at_begining + $steps_before_current + 1 + $steps_after_current + $at_end + 1)){ // +1: current step; +1: to have something to compress
+			if(
+				$screen > $at_begining &&
+				$current_step > ($at_begining + $steps_before_current + 2) && // 2: it doesn't make sense to compress only one page into "..."
+				$screen < ($current_step - $steps_before_current) &&
+				$screen < ($steps - $at_begining - $steps_before_current)
+			){
+				$out[] = "<li class=\"page-item skip disabled\"><span class=\"page-link\">&hellip;</span></li>";
+				while($screen < ($current_step - $steps_before_current) && $screen < $steps - $at_begining - $steps_before_current){ $screen++; }
+			}
+			//
+			if(
+				$current_step < ($steps - $at_end - $steps_after_current - 1) && // 1: it doesn't make sense to compress only one page into "..."
+				$screen > ($current_step + $steps_after_current) &&
+				($steps - $screen) >= $at_end &&
+				$screen > ($at_begining + $steps_before_current + 1)
+			){
+				$out[] = "<li class=\"page-item skip disabled\"><span class=\"page-link\">&hellip;</span></li>";
+				while(($steps - $screen) >= $at_end){ $screen++; }
+			}
 		}
 
 		$cur_from = ($screen-1) * $max_amount;
 	}
 
-	if(($from+$max_amount)<$total_amount){
-		$par["$from_name"] = $from + $max_amount;
+	if(($from + $limit) < $total_amount){
+		$par["$from_name"] = $from + $limit;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
-		$out[] = "<li class=\"page-item last-child next\"><a class=\"page-link\" href=\"$url\" rel=\"nofollow\">$label_right $symbol_right</a></li>";
+		$out[] = "<li class=\"page-item last-child next\"><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$label_right $symbol_right</a></li>";
 	}
 
 	$out[] = "</ul>";
 
-	$out[] = "<p><span class=\"badge badge-secondary\">".$total_amount."</span> ".$items_total_label."</p>";
+	if($items_total_label){
+		$out[] = "<p><span class=\"badge badge-secondary\">".$total_amount."</span> ".$items_total_label."</p>";
+	}
 	$out[] = "</div>";
 
 	return join("\n",$out);

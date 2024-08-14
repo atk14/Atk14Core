@@ -87,7 +87,7 @@ class Atk14Utils{
 	/**
 	 * Load all config files.
 	 *
-	 * Loads all config files (*.php) in directory `$ATK14_GLOBAL->getApplicationPath()/../config/`
+	 * Loads all config files (*.php) in directories `$ATK14_GLOBAL->getDocumentRoot()/local_config/` and `$ATK14_GLOBAL->getDocumentRoot()/config/`
 	 * Also tries to use formerly prefered directory `$ATK14_GLOBAL->getApplicationPath()/conf`
 	 *
 	 */
@@ -417,7 +417,13 @@ class Atk14Utils{
 		}
 
 		// do compile_id zahrneme jmeno controlleru, aby nedochazelo ke kolizim se sablonama z ruznych controlleru, ktere se jmenuji stejne
-		$smarty_version_salt = ATK14_USE_SMARTY3 ? "smarty3" : "smarty2";
+		if(ATK14_USE_SMARTY4){
+			$smarty_version_salt = "smarty4";
+		}elseif(ATK14_USE_SMARTY3){
+			$smarty_version_salt = "smarty3";
+		}else{
+			$smarty_version_salt = "smarty2";
+		}
 		$default_modifiers_salt = $smarty->default_modifiers ? "_".md5(serialize($smarty->default_modifiers)) : "";
 
 		$smarty->compile_id = $smarty->compile_id."atk14{$options["compile_id_salt"]}_{$smarty_version_salt}{$default_modifiers_salt}_{$options["namespace"]}_{$options["controller_name"]}_";
@@ -620,6 +626,37 @@ class Atk14Utils{
 
 		throw new Exception(sprintf("Can't convert %s var into a scalar value",get_class($var)));
 	}
+
+	/**
+	 * When working in a remote shell (entered by using e.g. ./scripts/shell production) this method returns the remote address
+	 *
+	 *
+	 * ```
+	 * echo Atk14Utils::ShellRemoteAddr(); // e.g. "192.158.1.38" or null if the remote address cannot be detected
+	 * ```
+	 */
+	static function ShellRemoteAddr(){
+		$SSH_CLIENT = (string)getenv("SSH_CLIENT");
+		if(strlen($SSH_CLIENT)>0 && ($ar = explode(" ",$SSH_CLIENT))){
+			return $ar[0];
+		}
+	}
+
+	/**
+	 * When working in a remote shell (entered by using e.g. ./scripts/shell production) this method returns the remote hostname
+	 *
+	 *
+	 * ```
+	 * echo Atk14Utils::ShellRemoteHost(); // e.g. "office.atk14guys.net" or null if the remote hostname cannot be detected
+	 * ```
+	 */
+	static function ShellRemoteHost(){
+		$remote_addr = self::ShellRemoteAddr();
+		if($remote_addr){
+			return gethostbyaddr($remote_addr);
+		}
+	}
+
 
 	/**
 	 * @ignore

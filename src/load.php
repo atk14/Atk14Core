@@ -22,7 +22,9 @@ require_once("$__PATH__/atk14_migration.php");
 require_once("$__PATH__/atk14_robot.php");
 require_once("$__PATH__/atk14_deployment_stage.php");
 require_once("$__PATH__/atk14_smarty_utils.php");
-if(ATK14_USE_SMARTY3){
+if(ATK14_USE_SMARTY4){
+	require_once("$__PATH__/atk14_smarty_base_v4.php");
+}elseif(ATK14_USE_SMARTY3){
 	require_once("$__PATH__/atk14_smarty_base_v3.php");
 }else{
 	require_once("$__PATH__/atk14_smarty_base_v2.php");
@@ -37,6 +39,7 @@ require_once("$__PATH__/tc_atk14_controller.php");
 require_once("$__PATH__/tc_atk14_model.php");
 require_once("$__PATH__/tc_atk14_field.php");
 require_once("$__PATH__/tc_atk14_router.php");
+require_once("$__PATH__/tc_atk14_robot.php");
 
 global $ATK14_GLOBAL;
 $ATK14_GLOBAL = Atk14Global::GetInstance();

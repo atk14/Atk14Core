@@ -141,12 +141,17 @@ class Atk14Url{
 		// stejne tak akce "error404", "error403" a "error500" neni mozne linkovat primo.
 		if(!isset($out) || in_array($out["controller"],array("application","atk14")) || in_array($out["action"],array("error404","error403","error500"))){
 			Atk14Locale::Initialize($out["lang"]);
-			return  Atk14Url::_NotFound($namespace);
+			return Atk14Url::_NotFound($namespace);
 		}
 
 		$get_params = array();
 		foreach($out as $key => $_value){	
 			if(in_array($key,array("controller","action","lang","__page_title__","__page_description__","__omit_trailing_slash__"))){ continue; }
+			if(array_key_exists($key,$options["get_params"]) && $_value!=$options["get_params"][$key]){
+				// The same parameter with a different value is already in the URL.
+				// That shouldn't happen.
+				return Atk14Url::_NotFound($namespace);
+			}
 			$get_params[$key] = $out[$key];
 		}
 
@@ -154,7 +159,7 @@ class Atk14Url{
 		Atk14Locale::Initialize($out["lang"]); // zde muze byt dojit ke zmene $out["lang"]
 		if($out["lang"]!=$lang_orig){
 			// In the URI there is a language which is not supported by the configuration
-			return  Atk14Url::_NotFound($namespace);
+			return Atk14Url::_NotFound($namespace);
 		}
 
 		// sestaveni URL s temito parametry, pokud se bude lisit, dojde k presmerovani....
@@ -247,12 +252,22 @@ class Atk14Url{
 	 * ```
 	 *
 	 * ```
-	 * echo Atk14Url::BuildLink($params, ["with_hostname" => false, "ssl" => true]); // "/en/products/detail/?id=10"
-	 * echo Atk14Url::BuildLink($params, ["with_hostname" => true, "ssl" => true]); // "https://www.bestthings.com/en/products/detail/?id=10"
-	 * echo Atk14Url::BuildLink($params, ["with_hostname" => "supergadgets.ie", "ssl" => true]); // "https://supergadgets.ie/en/products/detail/?id=10"
-	 *
-	 * echo Atk14Url::BuildLink($params, ["basic_auth_string" => "preview", "basic_auth_password" => "s3cr3t"]); // "http://preview:s3cr3t@www.bestthings.com/en/products/detail/?id=10"
+	 * echo Atk14Url::BuildLink($params, ["with_hostname" => false, "ssl" => true]);
 	 * ```
+	 * returns `/en/products/detail/?id=10`
+	 * ```
+	 * echo Atk14Url::BuildLink($params, ["with_hostname" => true, "ssl" => true]);
+	 * ```
+	 * returns `https://www.bestthings.com/en/products/detail/?id=10`
+	 * ```
+	 * echo Atk14Url::BuildLink($params, ["with_hostname" => "supergadgets.ie", "ssl" => true]);
+	 * ```
+	 * returns `https://supergadgets.ie/en/products/detail/?id=10`
+	 *
+	 * ```
+	 * echo Atk14Url::BuildLink($params, ["basic_auth_string" => "preview", "basic_auth_password" => "s3cr3t"]);
+	 * ```
+	 * returns `http://preview:s3cr3t@www.bestthings.com/en/products/detail/?id=10`
 	 *
 	 *
 	 * @param array $params
@@ -422,8 +437,8 @@ class Atk14Url{
 				if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
 				if($_key=="namespace"){ continue; } // namespace se umistuje vzdy do URL; neprenasi se v GET parametrech
 				if(isset($rules[$_key]["regexp"]) && !preg_match("/^\\/.*\\//",$rules[$_key]["value"])){ continue; }
-				if(is_int(strpos($out,"<$_key>"))){
-					$out = str_replace("<$_key>",urlencode($_value),$out);
+				if(is_int(strpos($out,"<$_key>")) && !is_array($_value)){
+					$out = str_replace("<$_key>",urlencode((string)$_value),$out);
 					continue;
 				}
 				if($_key=="controller" && isset($rules["controller"])){ continue; }
@@ -596,9 +611,10 @@ class Atk14Url{
 	static protected function _ParamMatches($rule,&$param){
 		return
 			isset($param) &&
+			!is_array($param) &&
 			(
 				(!$rule["regexp"] && "$rule[value]"==="$param") ||
-				($rule["regexp"] && preg_match($rule["value"],$param))
+				($rule["regexp"] && preg_match($rule["value"],(string)$param))
 			);
 	}
 

@@ -15,6 +15,16 @@
 class Atk14Controller{
 
 	/**
+	 * @var string
+	 */
+	var $page_title;
+
+	/**
+	 * @var string
+	 */
+	var $page_description;
+
+	/**
 	 * HTTP request object
 	 *
 	 * Contains information about current browsers HTTP request.
@@ -72,6 +82,16 @@ class Atk14Controller{
 	 * @var string
 	 */
 	var $action = "";
+
+	/**
+	 * @var string
+	 */
+	var $requested_controller;
+
+	/**
+	 * @var string
+	 */
+	var $requested_action;
 
 	/**
 	 * Flag that controls whether layout will be rendered.
@@ -247,6 +267,8 @@ class Atk14Controller{
 	 * @var array
 	 */
 	var $tpl_data = array();
+
+	var $walking_state;
 
 	/**
 	 * Data returned by multistep form actions.
@@ -1299,7 +1321,7 @@ class Atk14Controller{
 		$logging = 0;
 		$logger = &$this->logger;
 
-		if(preg_match("/^([a-f0-9]{32})-([0-9]{1,3})$/",$this->request->getVar("step_id"),$matches)){
+		if(preg_match("/^([a-f0-9]{32})-([0-9]{1,3})$/",(string)$this->request->getVar("step_id"),$matches)){
 			$step_unique = $matches[1];
 			$request_index = (int)$matches[2];
 		}else{
@@ -1463,5 +1485,11 @@ class Atk14Controller{
 	 */
 	function _before_walking(){
 
+	}
+
+	function _clear_walking_state(){
+		$state = &$this->walking_state;
+		if(!$state){ return; }
+		$this->session->clear($state["step_session_name"]);
 	}
 }

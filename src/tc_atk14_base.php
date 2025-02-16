@@ -6,20 +6,23 @@ if(!class_exists("TcSuperBase")){
 /**
  * Common base class for other ATK14 testing classes
  */
+ 
+#[\AllowDynamicProperties]
 class TcAtk14Base extends TcSuperBase {
+
 	var $dbmole = null;
 
-	function setUp(){
+	function _setUp(){
 		$this->dbmole->begin(array(
 			"execute_after_connecting" => true,
 		));
 		$this->setUpFixtures();
-		parent::setUp();
+		parent::_setUp();
 	}
 
-	function tearDown(){
+	function _tearDown(){
 		$this->dbmole->rollback();
-		parent::tearDown();
+		parent::_tearDown();
 	}
 	
 	function __construct($name = NULL, array $data = array(), $dataName = ''){
@@ -74,12 +77,12 @@ class TcAtk14Base extends TcSuperBase {
 	 * // file: test/models/tc_base.php
 	 * class TcBase extends TcAtk14Model {
 	 *
-	 *  function setUp(){
+	 *  function _setUp(){
 	 *    $this->dbmole->begin();
 	 *    $this->setUpFixtures();
 	 *  }
 	 *
-	 *  function tearDown(){
+	 *  function _tearDown(){
 	 *    $this->dbmole->rollback();
 	 *  }
 	 * }
@@ -107,5 +110,26 @@ class TcAtk14Base extends TcSuperBase {
 	 */
 	function loadFixture($name){
 		return Atk14Fixture::Load($name);
+	}
+
+	function getAnnotations():array{
+		if(is_callable("parent::getAnnotations")){
+			// in case of PHPUnit <= 8.*
+			return parent::getAnnotations();
+		}
+
+		$annotations = array("class" => array());
+
+		$ref = new ReflectionClass(get_class($this));
+		$docComment = $ref->getDocComment();
+		preg_match_all('/@(\w+)\s+(.*)/', $docComment, $matches, PREG_SET_ORDER);
+		foreach ($matches as $match) {
+			if(!isset($annotations["class"][$match[1]])){
+				$annotations["class"][$match[1]] = array();
+			}
+			$annotations["class"][$match[1]][] = trim($match[2]);
+		}
+
+		return $annotations;
 	}
 }

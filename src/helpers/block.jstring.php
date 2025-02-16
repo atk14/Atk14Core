@@ -48,5 +48,6 @@ function smarty_block_jstring($params,$content,$template,&$repeat){
 		// "<scr" + "ipt>" -> "<script>"
 		$content = str_replace('" + "','',$content);
 	}
+
 	return '"'.$content.'"';
 }

@@ -39,6 +39,7 @@ class Atk14MailerProxy{
 			"clear_attachments",
 			"add_html_image",
 			"clear_html_images",
+			"getSentEmails",
 		);
 		if(in_array($method,$methods_to_proxy) || preg_match('/^_/',$method)){
 			$callable = array($this->_mailer,$method);
@@ -57,5 +58,9 @@ class Atk14MailerProxy{
 
 	function __set($name,$value){
 		$this->_mailer->$name = $value;
+	}
+
+	function getSentEmails(){
+		return $this->_mailer->_getSentEmails();
 	}
 }

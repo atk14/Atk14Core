@@ -340,20 +340,36 @@ class Atk14Utils{
 	 * @return string joined attributes
 	 */
 	static function StringToOptions($options){
+		static $placeholder;
+		if(!$placeholder){ $placeholder = "~X".uniqid()."X~"; }
+
 		if(is_array($options)){ return $options; }
 		if(trim($options)==""){ return array(); }
+
+		$options = strtr($options,array(
+			"\\," => "$placeholder-cm",
+			"\\=" => "$placeholder-eq",
+		));
 
 		$ar = explode(",",$options);
 		$options = array();
 
 		foreach($ar as $item){
 			list($key,$value) = strpos($item,'=') ? explode('=',$item) : array($item,true);
-			if(strtolower($value)==="true"){
+			$value_lower = strtolower($value);
+			if(is_bool($value)){
+				// do notning
+			}elseif($value_lower==="true"){
 				$value = true;
-			}elseif(strtolower($value)==="false"){
+			}elseif($value_lower==="false"){
 				$value = false;
-			}elseif(strtolower($value)==="null"){
+			}elseif($value_lower==="null"){
 				$value = null;
+			}else{
+				$value = strtr($value,array(
+					"$placeholder-cm" => ",",
+					"$placeholder-eq" => "=",
+				));
 			}
 			$options[$key] = $value;
 		}

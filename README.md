@@ -3,14 +3,17 @@ ATK14 Core
 
 Core libraries of the [ATK14 Framework](https://www.atk14.net/).
 
-At the moment this package is maintained only for testing purposes for other packages (e.g. atk14/decimal-field).
+This package has been extracted from the [main ATK14 repository](https://github.com/atk14/Atk14).
 
-If you want to create new ATK14 application start with one of skeletons:
+At the moment this package is maintained only for testing purposes for other packages (e.g. [atk14/decimal-field](https://github.com/atk14/DecimalField)).
 
-* [ATK14 Embryo](https://embryo.atk14.net/)
-* [ATK14 Skelet](https://skelet.atk14.net/)
-* [ATK14 Catalog](https://catalog.atk14.net/)
-* [ATK14 Eshop](https://eshop.atk14.net/)
+If you want to create a new ATK14 application, start with one of the skeletons:
+
+* [ATK14 Embryo](https://github.com/atk14/Atk14Embryo)
+* [ATK14 Mini Skelet](https://github.com/atk14/Atk14MiniSkelet)
+* [ATK14 Skelet](https://github.com/atk14/Atk14Skelet)
+* [ATK14 Catalog](https://github.com/atk14/Atk14Catalog)
+* [ATK14 Eshop](https://github.com/atk14/Atk14Eshop)
 
 License
 -------

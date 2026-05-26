@@ -12,17 +12,18 @@
  * @author Jaromir Tomek
  *
  */
+#[\AllowDynamicProperties]
 class Atk14Controller{
 
 	/**
 	 * @var string
 	 */
-	var $page_title;
+	public $page_title;
 
 	/**
 	 * @var string
 	 */
-	var $page_description;
+	public $page_description;
 
 	/**
 	 * HTTP request object
@@ -32,7 +33,7 @@ class Atk14Controller{
 	 * @var HTTPRequest
 	 *
 	 */
-	var $request = null;
+	public $request = null;
 
 	/**
 	 * HTTP response object
@@ -41,14 +42,14 @@ class Atk14Controller{
 	 *
 	 * @var HTTPResponse
 	 */
-	var $response = null;
+	public $response = null;
 
 	/**
 	 * Link to logging engine.
 	 *
 	 * @var Logger
 	 */
-	var $logger = null;
+	public $logger = null;
 
 	/**
 	 * Instance of Atk14Mailer class.
@@ -60,38 +61,38 @@ class Atk14Controller{
 	 * @todo: to be explained
 	 * @var Atk14Mailer
 	 */
-	var $mailer = null;
+	public $mailer = null;
 
 	/**
 	 * Name of the namespace.
 	 *
 	 * @var string
 	 */
-	var $namespace = "";
+	public $namespace = "";
 
 	/**
 	 * Name of the controller
 	 *
 	 * @var string
 	 */
-	var $controller = "";
+	public $controller = "";
 
 	/**
 	 * Name of the action being currently executed
 	 *
 	 * @var string
 	 */
-	var $action = "";
+	public $action = "";
 
 	/**
 	 * @var string
 	 */
-	var $requested_controller;
+	public $requested_controller;
 
 	/**
 	 * @var string
 	 */
-	var $requested_action;
+	public $requested_action;
 
 	/**
 	 * Flag that controls whether layout will be rendered.
@@ -100,14 +101,14 @@ class Atk14Controller{
 	 * {@link $render_template}
 	 * @var boolean
 	 */
-	var $render_layout = true;
+	public $render_layout = true;
 
 	/**
 	 * Name of layout template used to generate output.
 	 *
 	 * @var string
 	 */
-	var $layout_name = "";
+	public $layout_name = "";
 
 	/**
 	 * Flag that controls whether template will be rendered.
@@ -116,7 +117,7 @@ class Atk14Controller{
 	 *
 	 * @var boolean
 	 */
-	var $render_template = true;
+	public $render_template = true;
 
 	/**
 	 * Name of template to render.
@@ -125,42 +126,42 @@ class Atk14Controller{
 	 *
 	 * @var string
 	 */
-	var $template_name = null;
+	public $template_name = null;
 
 	/**
 	 * Current language used
 	 *
 	 * @var string
 	 */
-	var $lang = "";
+	public $lang = "";
 
 	/**
 	 * Flag whether this controller is in rendering component mode
 	 *
 	 * @var boolean
 	 */
-	var $rendering_component = false;
+	public $rendering_component = false;
 
 	/**
 	 * In rendering component mode this is the previous (caller) namespace
 	 *
 	 * @var string
 	 */
-	var $prev_namespace = null;
+	public $prev_namespace = null;
 
 	/**
 	 * In rendering component mode this is the previous (caller) controller
 	 *
 	 * @var string
 	 */
-	var $prev_controller = null;
+	public $prev_controller = null;
 
 	/**
 	 * In rendering component mode this is the previous (caller) action
 	 *
 	 * @var string
 	 */
-	var $prev_action = null;
+	public $prev_action = null;
 
 	/**
 	 * A flag that an action has been already executed.
@@ -170,7 +171,7 @@ class Atk14Controller{
 	 *
 	 * @var signature
 	 */
-	var $action_executed = false;
+	public $action_executed = false;
 
 
 	/**
@@ -178,7 +179,7 @@ class Atk14Controller{
 	 *
 	 * @var Dictionary
 	 */
-	var $params = null;
+	public $params = null;
 
 	/**
 	 * Session instance.
@@ -186,45 +187,45 @@ class Atk14Controller{
 	 * @see Atk14Session
 	 * @var Atk14Session
 	 */
-	var $session = null;
+	public $session = null;
 
 	/**
 	 * Flash messages
 	 *
 	 * @var Atk14Flash
 	 */
-	var $flash = null;
+	public $flash = null;
 
 	/**
 	 * @var boolean
 	 */
-	var $cookies_enabled;
+	public $cookies_enabled;
 
 	/**
 	 * Instance of {@link Atk14Form} used in current controllers action.
 	 *
 	 * @var Atk14Form
 	 */
-	var $form = null;
+	public $form = null;
 
 	/**
 	 * Instance of {@link Atk14Sorting} class.
 	 *
 	 * @var Atk14Sorting
 	 */
-	var $sorting = null;
+	public $sorting = null;
 
 	/**
 	 * Will be constructed before _before_render() calling.
 	 * 
 	 * @var Smarty
 	 */
-	var $smarty = null;
+	public $smarty = null;
 
 	/**
 	 * @access private
 	 */
-	var $_atk14_caches_action = array();
+	public $_atk14_caches_action = [];
 
 	/**
 	 * List of before_filters added by {@link _prepend_before_filter()}
@@ -233,7 +234,7 @@ class Atk14Controller{
 	 *
 	 * @var array
 	 */
-	private $_atk14_prepended_before_filters = array();
+	private $_atk14_prepended_before_filters = [];
 
 	/**
 	 * List of before_filters added by {@link _append_before_filter()}
@@ -242,7 +243,7 @@ class Atk14Controller{
 	 *
 	 * @var array
 	 */
-	private $_atk14_appended_before_filters = array();
+	private $_atk14_appended_before_filters = [];
 
 	/**
 	 * List of after_filters added by {@link _prepend_after_filter()}
@@ -251,7 +252,7 @@ class Atk14Controller{
 	 *
 	 * @var array
 	 */
-	private $_atk14_prepended_after_filters = array();
+	private $_atk14_prepended_after_filters = [];
 
 	/**
 	 * List of after_filters added by {@link _append_after_filter()}
@@ -260,15 +261,15 @@ class Atk14Controller{
 	 *
 	 * @var array
 	 */
-	private $_atk14_appended_after_filters = array();
+	private $_atk14_appended_after_filters = [];
 
 	/**
 	 * Data for Smarty templates
 	 * @var array
 	 */
-	var $tpl_data = array();
+	public $tpl_data = [];
 
-	var $walking_state;
+	public $walking_state;
 
 	/**
 	 * Data returned by multistep form actions.
@@ -279,7 +280,7 @@ class Atk14Controller{
 	 * ```
 	 *	function registration__get_user_data() {
 	 *	...
-	 *		return array(
+	 *		return [
 	 *			"login" => "terminator",
 	 *			"name" => "T1000",
 	 *		);
@@ -289,7 +290,7 @@ class Atk14Controller{
 	 * ```
 	 *	function registration__get_user_info() {
 	 *	...
-	 *		return array(
+	 *		return [
 	 *			"description" => "Came from future",
 	 *			"special_skills" => "unbreakable",
 	 *		);
@@ -305,16 +306,16 @@ class Atk14Controller{
 	 *
 	 * will show something like this
 	 * ```
-	 *	array(
-	 *		"get_user_data" = array("login" => "terminator", "name" => "T1000"),
-	 *		"get_user_info" => array("description" => "Came from future", "special_skills" => "unbreakable"),
+	 *	[
+	 *		"get_user_data" = ["login" => "terminator", "name" => "T1000"),
+	 *		"get_user_info" => ["description" => "Came from future", "special_skills" => "unbreakable"),
 	 *		)
 	 * ```
 	 *
 	 * @var array
 	 *
 	 */
-	var $returned_by = array();
+	public $returned_by = [];
 
 	/**
 	 * Data filled in multistep forms.
@@ -327,14 +328,14 @@ class Atk14Controller{
 	 *
 	 * @var array
 	 */
-	var $form_data = array();
+	public $form_data = [];
 
 	/**
 	 * Database engine.
 	 *
 	 * @var DbMole
 	 */
-	var $dbmole = null;
+	public $dbmole = null;
 
 	/**
 	 * Controller initialization
@@ -345,13 +346,13 @@ class Atk14Controller{
 	 * - request HttpRequest
 	 * - params
 	 */
-	function atk14__initialize($options = array()){
+	function atk14__initialize($options = []){
 		global $ATK14_GLOBAL;
 
-		$options = array_merge(array(
+		$options = array_merge([
 			"request" => null,
 			"params" => null,
-		),$options);
+		],$options);
 
 		$this->lang = $ATK14_GLOBAL->getValue("lang");
 	
@@ -365,7 +366,7 @@ class Atk14Controller{
 		$this->response = new HTTPResponse();
 		$this->params = new Dictionary($this->request->getVars("PG")); // prefering posted vars
 		$this->params->merge($options["params"]);
-		unset($options["params"]); // aby pozdeji nedoslo k automatickemu nastaveni vlastnosti $this->params...
+		unset($options["params"]); // to prevent automatic setting of $this->params property later...
 		$this->dbmole = &$GLOBALS["dbmole"];
 		$this->logger = $ATK14_GLOBAL->getLogger();
 		$this->flash = &Atk14Flash::GetInstance();
@@ -385,24 +386,23 @@ class Atk14Controller{
 
 		$this->mailer = Atk14MailerProxy::GetInstanceByController($this);
 
-		$this->template_name = null; // !! $this->template_name bude podle potreb nastaveno az v _execute_action()
+		$this->template_name = null; // !! $this->template_name will be set as needed in _execute_action()
 		$this->render_template = true;	
 
-		//prenastaveni controlleru v pripade, ze toto je XHR request
+		// override controller settings for XHR requests
 		if($this->request->xhr()){
 			$this->response->setContentType("text/javascript");
-			//pozor!! nasteveni charsetu zakomentovavam... neni mozne uvazovat, ze vsechny aplikace pojdenou v UTF-8
-			//$this->response->setContentCharset("UTF-8");
+			// charset is intentionally not set here — apps may not use UTF-8
 			$this->render_layout = false;
 		}
 
-		$this->tpl_data = array();
+		$this->tpl_data = [];
 
 		// *** Loading base forms ***
 		// If this is an ArticlesController for instance and there is a file app/forms/articles/articles_form.inc, it will be included.
 		// The class ArticlesForm is ment to be the base class for forms used by the controller.
 		// TODO: utilize class_autoload()
-		$_base_forms = array();
+		$_base_forms = [];
 		if($this->namespace!=""){ $_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/{$this->namespace}_form.inc"; } // ./app/forms/admin/admin_form.inc
 		$_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/$this->controller/{$this->controller}_form.inc"; // ./app/forms/admin/articles/articles_form.inc
 		foreach($_base_forms as $_base_form){
@@ -416,7 +416,7 @@ class Atk14Controller{
 	 * @access private
 	 *
 	 */
-	function atk14__ExecuteAction($action){ return $this->_execute_action($action,array("force_to_set_template_name" => false, "force_to_initialize_form" => false)); }
+	function atk14__ExecuteAction($action){ return $this->_execute_action($action,["force_to_set_template_name" => false, "force_to_initialize_form" => false]); }
 
 	/**
 	 * @access private
@@ -451,7 +451,7 @@ class Atk14Controller{
 		);
 
 		foreach($filters as $f){
-			if(is_a($f,"Closure")){
+			if($f instanceof Closure){
 				$f();
 				continue;
 			}
@@ -555,13 +555,13 @@ class Atk14Controller{
 	 *
 	 * @todo explain options
 	 */
-	function _execute_action($action,$options = array()){
+	function _execute_action($action,$options = []){
 		global $ATK14_GLOBAL;
 
-		$options = array_merge(array(
+		$options = array_merge([
 			"force_to_set_template_name" => true,
 			"force_to_initialize_form" => true,
-		),$options);
+		],$options);
 
 		$this->action = $action;
 
@@ -606,8 +606,8 @@ class Atk14Controller{
 				$this->template_name = "$this->template_name.xhr";
 		}
 
-		// pokud v aktualni action metode doslo k volani
-		// $this->_execute_action(), nemuzeme pro volajici action generovat zadny vystup!
+		// if _execute_action() was already called inside the current action method,
+		// skip rendering for the calling action
 		if($this->action_executed){ return; }
 
 		$this->action_executed = true;
@@ -625,7 +625,7 @@ class Atk14Controller{
 			return;
 		}
 
-		if(is_null($this->smarty)){ $this->smarty = $this->_get_smarty(array("assign_data" => false)); }
+		if(is_null($this->smarty)){ $this->smarty = $this->_get_smarty(["assign_data" => false]); }
 		$this->_before_render();
 
 		// $this->render_template may be set to false in _before_render()!
@@ -640,7 +640,6 @@ class Atk14Controller{
 
 		$this->smarty->assign($this->tpl_data);
 
-		//if($this->render_template && strlen($this->response->getLocation())==0){
 		$controller_name = $this->controller;
 		$layout_template = $this->layout_name;
 		$explicit_layout_name = "";
@@ -658,9 +657,9 @@ class Atk14Controller{
 			}
 			$this->smarty->assign("template_name",$this->template_name);
 			$this->smarty->assign("layout_name",$this->layout_name);
-			$action_content = array(
+			$action_content = [
 				"main" => $this->smarty->fetch($template_name)
-			);
+			];
 			$this->smarty->assign("template_name",$this->template_name); // 2nd call prevents template_name to be overwritten inside the rendering component
 			if(!$this->rendering_component){
 				$explicit_layout_name = $GLOBALS["__explicit_layout_name__"];
@@ -676,13 +675,13 @@ class Atk14Controller{
 			if($layout_template==""){
 				// default layout is expected in app/layouts/namespace/default.tpl
 				// prior it was app/layouts/namespace/_default.tpl
-				foreach(array(
+				foreach([
 					"$this->namespace/$controller_name.tpl",
 					"$this->namespace/default.tpl",
 					"$this->namespace/_default.tpl",
 					"default.tpl",
 					"_default.tpl",
-				) as $_path){
+				] as $_path){
 					if(file_exists($ATK14_GLOBAL->getApplicationPath()."layouts/$_path")){
 						preg_match('/([^\/.]+)\.tpl$/',$_path,$matches);
 						$layout_template = $matches[1];
@@ -705,8 +704,8 @@ class Atk14Controller{
 			$layout_content = $this->smarty->fetch($_layout_template);
 			$layout_content = str_replace("<%atk14_content[main]%>",$action_content["main"],$layout_content);
 			foreach($this->smarty->getAtk14ContentKeys() as $c_key){
-				// TODO: toto nahrazeni uz provadim rovnou v helperu placeholder...
-				// facha to? vyhodime to?
+				// TODO: this replacement is already done in the placeholder helper...
+				// does it still work? remove it?
 				$layout_content = str_replace("<%atk14_content[$c_key]%>",$this->smarty->getAtk14Content($c_key),$layout_content);
 			}
 			$this->response->write($layout_content);
@@ -718,11 +717,10 @@ class Atk14Controller{
 		}
 
 		if(!$cache){
-			$this->_atk14_write_action_cache($action_content,array("explicit_layout_name" => $explicit_layout_name));
+			$this->_atk14_write_action_cache($action_content,["explicit_layout_name" => $explicit_layout_name]);
 		}
 
 		$this->_after_render();
-		//}
 	}
 
 	/**
@@ -752,10 +750,10 @@ class Atk14Controller{
 	 * @param array $options
 	 * @return Atk14Form
 	 */
-	function _get_form($class_name = null,$options = array()){
-		$options = array_merge(array(
-			"attrs" => array(),
-		),$options);
+	function _get_form($class_name = null,$options = []){
+		$options = array_merge([
+			"attrs" => [],
+		],$options);
 		if(!isset($class_name)){
 			$class_name = new String4("{$this->action}_form");
 		}else{
@@ -773,9 +771,9 @@ class Atk14Controller{
 		$id = "form_".$this->controller."_".$id->underscore();
 		$id = preg_replace("/_form$/","",$id);
 
-		$options["attrs"] = array_merge(array(
+		$options["attrs"] = array_merge([
 			"id" => $id,
-		),$options["attrs"]);
+		],$options["attrs"]);
 		return Atk14Form::GetForm($class_name,$this,$options);
 	}		
 
@@ -790,11 +788,11 @@ class Atk14Controller{
 	 *
 	 * ```
 	 * $content = $this->_render("article_item");
-	 * $content = $this->_render("article_item",array(
+	 * $content = $this->_render("article_item",[
 	 * 	"from" => $articles,
 	 * ));
 	 *
-	 * $content = $this->_render(array(
+	 * $content = $this->_render([
 	 * 	"partial" => "article_item",
 	 * 	"from" => $articles
 	 * ));
@@ -802,7 +800,7 @@ class Atk14Controller{
 	 *
 	 * Also allows to render a text output to the response.
 	 * ```
-	 * $this->_render(array(
+	 * $this->_render([
 	 * 	"text" => "alert('The record has been deleted!');",
 	 * ));
 	 * ```
@@ -813,7 +811,7 @@ class Atk14Controller{
 	 * @param array $params
 	 * @return string
 	 */
-	function _render($params_or_partial,$params = array()){
+	function _render($params_or_partial,$params = []){
 		if(is_string($params_or_partial)){
 			$params["partial"] = $params_or_partial;
 		}else{
@@ -842,24 +840,24 @@ class Atk14Controller{
 	 * - assign_data - takes smarty variables from current controller's tpl_data and sets them in the new Atk14Smarty instance. [default is true]
 	 * @return Atk14Smarty
 	 */
-	function _get_smarty($options = array()){
+	function _get_smarty($options = []){
 		global $ATK14_GLOBAL;
 
-		$options = array_merge(array(
+		$options = array_merge([
 			"assign_data" => true,
-		),$options);
+		],$options);
 
-		$smarty = Atk14Utils::GetSmarty(array(
+		$smarty = Atk14Utils::GetSmarty([
 			$ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/$this->controller/",
 			$ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/",
 			$ATK14_GLOBAL->getApplicationPath()."views/",
 			dirname(__FILE__)."/views/",
-		),array(
+		],[
 			"controller_name" => $this->controller,
 			"namespace" => $ATK14_GLOBAL->getValue("namespace"),
-		));
+		]);
 
-		// nabindovani hodnot do smarty, ktere by volani action metody nemelo zmenit...
+		// assign values to Smarty that the action method should not override...
 
 		// environment constants
 		$smarty->assign("DEVELOPMENT",DEVELOPMENT);
@@ -973,15 +971,15 @@ class Atk14Controller{
 	 *		}
 	 * </code>
 	 */
-	function _caches_action($options = array()){
-		$options = array_merge(array(
+	function _caches_action($options = []){
+		$options = array_merge([
 			"action" => $this->action,
 			"salt" => "",
 			"expires" => 5 * 60
-		),$options);
+		],$options);
 
 		if(!is_array($options["action"])){
-			$options["action"] = array($options["action"]);
+			$options["action"] = [$options["action"]];
 		}
 		
 		foreach($options["action"] as $action){
@@ -994,7 +992,7 @@ class Atk14Controller{
 	 * @access private
 	 *
 	 */
-	function _atk14_write_action_cache(&$content,$extra_values = array()){
+	function _atk14_write_action_cache(&$content,$extra_values = []){
 		if(!$recipe = $this->_atk14_get_action_cache_recipe()){ return; }
 
 		if(is_object($content)){ // StringBuffer obviously
@@ -1002,24 +1000,24 @@ class Atk14Controller{
 			return $this->_atk14_write_action_cache($content_str);
 		}
 
-		$serialized = serialize(array(
+		$serialized = serialize([
 			"content" => $content,
-			"controller_state" => array(
+			"controller_state" => [
 				"page_title" => $this->page_title,
 				"page_description" => $this->page_description,
 				"render_layout" => $this->render_layout,
 				"render_template" => $this->render_template,
 				"layout_name" => $this->layout_name,
 				"template_name" => $this->template_name,
-			),
-			"response_state" => array(
+			],
+			"response_state" => [
 				"content_type" => $this->response->getContentType(),
 				"content_charset" => $this->response->getContentCharset(),
 				"status_code" => $this->response->getStatusCode(),
 				"headers" => $this->response->getHeaders(),
-			),
+			],
 			"extra_values" => $extra_values,
-		));
+		]);
 
 		Files::Mkdir($recipe["dir"],$err,$err_msg);
 		Files::WriteToFile($recipe["filename"],$serialized,$err,$err_msg);
@@ -1036,7 +1034,7 @@ class Atk14Controller{
 
 		if(file_exists($filename) && ((time()-filemtime($filename))<=$recipe["expires"])){
 			$serialized = Files::GetFileContent($filename,$err,$err_msg);
-			if(($unserialized = unserialize($serialized)) && is_array($unserialized) && isset($unserialized["content"])){
+			if(($unserialized = unserialize($serialized,["allowed_classes" => false])) && is_array($unserialized) && isset($unserialized["content"])){
 				$cache = $unserialized;
 				return true;
 			}
@@ -1070,14 +1068,14 @@ class Atk14Controller{
 			$filename .= "_$suffix";
 		}
 
-		return array(
+		return [
 			"dir" => $dir,
 			"filename" => $filename,
 			"expires" => $ar["expires"]
-		);
+		];
 	}
 
-
+	// ################### Building links #################################################################################################################################### //
 
 	/**
 	 * Generates a URL.
@@ -1098,8 +1096,8 @@ class Atk14Controller{
 	 * $params["lang"] bude prip. naplnen $this->lang.
 	 *
 	 * ```
-	 *	$url = $this->_link_to(array("action" => "overview"));
-	 *	$url = $this->_link_to(array("action" => "detail", "id" => 2045, "format" => "xml"),array("connector" => "&amp;")); // default connector is "&"
+	 *	$url = $this->_link_to(["action" => "overview"));
+	 *	$url = $this->_link_to(["action" => "detail", "id" => 2045, "format" => "xml"),["connector" => "&amp;")); // default connector is "&"
 	 *	$url = $this->_link_to(); // link to the current namespace, ncontroller, action and lang
 	 * ```
 	 *
@@ -1111,16 +1109,16 @@ class Atk14Controller{
 	 * @see Atk14::BuildLink()
 	 *
 	 */
-	function _link_to($params = array(),$options = array()){
-		$options += array(
+	function _link_to($params = [],$options = []){
+		$options += [
 			"connector" => "&",
-		);
-		$__current_ary__ = array(
+		];
+		$__current_ary__ = [
 			"action" => $this->action,
 			"controller" => $this->controller,
 			"namespace" => $this->namespace,
 			"lang" => $this->lang
-		);
+		];
 
 		return Atk14Url::BuildLink($params,$options,$__current_ary__);
 	}
@@ -1131,8 +1129,8 @@ class Atk14Controller{
 	 *
 	 * ```
 	 *	$create_url = $this->_link_to_action("create_new");
-	 *	$done_url = $this->_link_to_action("create_new",array("done" => "1"));
-	 *	$done_url = $this->_link_to_action("create_new",array(),array("connector" => "&"));
+	 *	$done_url = $this->_link_to_action("create_new",["done" => "1"));
+	 *	$done_url = $this->_link_to_action("create_new",[),["connector" => "&"));
 	 * ```
 	 *
 	 * @param string $action
@@ -1141,10 +1139,12 @@ class Atk14Controller{
 	 *
 	 * @see Atk14::BuildLink() for $other_params and $options description
 	 */
-	function _link_to_action($action,$other_params = array(),$options = array()){
+	function _link_to_action($action,$other_params = [],$options = []){
 		$other_params["action"] = $action;
 		return $this->_link_to($other_params,$options);
 	}
+
+	// ################### Redirecting to somewhere ########################################################################################################################## //
 
 	/**
 	 * Realize HTTP redirection.
@@ -1160,9 +1160,9 @@ class Atk14Controller{
 	 *	$this->_redirect_to("/en/books/"); // redirects to a given URI (param starts with '/')
 	 * ```
 	 * ```
-	 *	$this->_redirect_to(array("action" => "overview"));
-	 *	$this->_redirect_to("index"); // same like $this->_redirect_to(array("action" => "index"));
-	 *	$this->_redirect_to("main/index"); // same like $this->_redirect_to(array("controller" => "main", "action" => "index"));
+	 *	$this->_redirect_to(["action" => "overview"));
+	 *	$this->_redirect_to("index"); // same like $this->_redirect_to(["action" => "index"));
+	 *	$this->_redirect_to("main/index"); // same like $this->_redirect_to(["controller" => "main", "action" => "index"));
 	 * ```
 	 *
 	 * This call redirects to the same URL
@@ -1172,12 +1172,12 @@ class Atk14Controller{
 	 *
 	 * Moving permanently
 	 * ```
-	 *	$this->_redirect_to(array("action" => "overview"),array("moved_permanently" => true));
+	 *	$this->_redirect_to(["action" => "overview"),["moved_permanently" => true));
 	 * ```
 	 *
 	 * or
 	 * ```
-	 *	$this->_redirect_to(array("action" => "overview"),array("status" => 301));
+	 *	$this->_redirect_to(["action" => "overview"),["status" => 301));
 	 * ```
 	 *
 	 *
@@ -1188,11 +1188,11 @@ class Atk14Controller{
 	 * @uses HTTPResponse::setLocation()
 	 * @return string
 	 */
-	function _redirect_to($params = array(),$options = array()){
-		$options = array_merge(array(
+	function _redirect_to($params = [],$options = []){
+		$options = array_merge([
 			"connector" => "&",
 			"status" => null, // 301, 302...
-		),$options);
+		],$options);
 		$url = $this->_link_to($params,$options);
 
 		// after a POST request the status 303 is automatically used
@@ -1211,8 +1211,8 @@ class Atk14Controller{
 	 * Examples:
 	 * ```
 	 * $this->_redirect_to_action("overview");
-	 * $this->_redirect_to_action("overview",array("offset" => 10));
-	 * $this->_redirect_to_action("overview",array("offset" => 10),array("moved_permanently" => true));
+	 * $this->_redirect_to_action("overview",["offset" => 10));
+	 * $this->_redirect_to_action("overview",["offset" => 10),["moved_permanently" => true));
 	 * ```
 	 * @param string $action
 	 * @param array $other_params parameters to build url query part
@@ -1222,7 +1222,7 @@ class Atk14Controller{
 	 * - connector - character joining query parameters
 	 */
 
-	function _redirect_to_action($action,$other_params = array(),$options = array()){
+	function _redirect_to_action($action,$other_params = [],$options = []){
 		$other_params["action"] = $action;
 		return $this->_redirect_to($other_params,$options);
 	}
@@ -1243,10 +1243,10 @@ class Atk14Controller{
 	 * - **moved_permanently** sets 301 http status code
 	 * @return string
 	 */
-	function _redirect_to_ssl($options = array()){
-		$options += array(
+	function _redirect_to_ssl($options = []){
+		$options += [
 			"moved_permanently" => true,
-		);
+		];
 		$url = "https://".$this->request->getHTTPHost().$this->request->getRequestURI();
 		$this->_redirect_to($url,$options);
 		return $url;
@@ -1270,12 +1270,214 @@ class Atk14Controller{
 		return $url;
 	}
 
+	// ################### Finding an object for action ###################################################################################################################### //
+
+	/**
+	 * Attempt to instantiate object by object_name and parameter
+	 *
+	 * <code>
+	 *	 $this->_find("user");
+	 *	 $this->_find("page","page_id");
+	 *	 $this->_find("page",[
+	 *			"key" => "page_id",
+	 *			"execute_error404_if_not_found" => false,
+	 *	 ));
+	 * </code>
+	 *
+	 * When an object is instantiated it can by found as
+	 *	$this->logged_user
+	 *	$this->tpl_data["logged_user"]
+	 *
+	 * A very common usage is:
+	 * <code>
+	 *	function _before_filter(){
+	 *		if(in_[$this->action,["detail","edit","destroy"))){
+	 *			$this->_find("article");
+	 *		}
+	 *	}
+	 * </code>
+	 */
+	function _find($object_name,$options = []){
+		if(is_string($options)){
+			$options = ["key" => $options];
+		}
+
+		$options += [
+			"key" => "id",
+			"id" => null, // 123
+			"execute_error404_if_not_found" => true,
+			"class_name" => null, // e.g. "User"
+
+			"set_object_as_controller_property" => true,
+			"add_object_to_template" => true,
+		];
+
+		if(!$options["class_name"]){
+			$options["class_name"] = String4::ToObject($object_name)->camelize()->toString(); // page -> Page
+		}
+
+		$key = $options["key"];
+
+		$id = isset($options["id"]) ? $options["id"] : $this->params->getInt($key);
+
+		$object = Cache::Get($options["class_name"],$id);
+
+		$options["set_object_as_controller_property"] && ($this->$object_name = $object);
+		$options["add_object_to_template"] && ($this->tpl_data["$object_name"] = $object);
+
+		if(!$object){
+			$options["execute_error404_if_not_found"] && $this->_execute_action("error404");
+		}
+
+		return $object;
+	}
+
+	/**
+	 * Just finds an object with no magic on the background
+	 *
+	 * ... or returns null when the object was not found.
+	 *
+	 *	$article = $this->_just_find("article");
+	 *	$article = $this->_just_find("article","article_id");
+	 *	$article = $this->_just_find("article",123);
+	 *	$article = $this->_just_find("article",["id" => 123));
+	 */
+	function _just_find($object_name,$options = []){
+		if(is_numeric($options)){
+			$options = ["id" => $options];
+		}elseif(is_string($options)){
+			$options = ["key" => $options];
+		}
+		$options["execute_error404_if_not_found"] = false;
+		$options["set_object_as_controller_property"] = false;
+		$options["add_object_to_template"] = false;
+		return $this->_find($object_name,$options);
+	}
+
+
+	// ################### Saving return URI & Redirecting back ############################################################################################################## //
+
+	/**
+	 * Adds return_uri to the given form to it's hidden parameters.
+	 *
+	 * $this->_save_return_uri();
+	 * $this->_save_return_uri($this->form);
+	 *
+	 *	controller SomeController extends ApplicationController{
+	 *		function edit(){
+	 *			// may be also in _before_filter()
+	 *			$this->_save_return_uri();
+	 *			if($this->params->defined("storno")){ return $this->_redirect_back(); }
+	 *
+	 *			if($this->request->post() && ($d = $this->form->validate($this->params))){
+	 *				// ...
+	 *			}
+	 *		}
+	 *	}
+	 */
+	function _save_return_uri(&$form = null){
+
+		// An experiment: let's utilize the session for better "redirect back" ability
+		if($this->request->get()){
+			($return_uris = $this->session->g("return_uris")) || ($return_uris = []);
+			$key = md5($this->request->getRequestUri());
+			if(!isset($return_uris[$key])){
+				if(count($return_uris)>50){ array_shift($return_uris); } // for safety reasons there is a max limit
+				$return_uris[$key] = $this->_get_return_uri(null);
+				$this->session->s("return_uris",$return_uris);
+			}
+		}
+
+		if(!isset($form)){ $form = $this->form; }
+		$return_uri = $this->_get_return_uri(null);
+		$form->set_hidden_field("_return_uri_",$return_uri);
+	}
+
+	/**
+	 * Returns true when the given URI is safe to redirect to.
+	 * Accepts only relative paths (starting with /) to prevent open redirect attacks.
+	 * Rejects absolute URLs (http://...) and protocol-relative URLs (//...).
+	 *
+	 *	$this->_is_safe_return_uri("/"); // true
+	 *	$this->_is_safe_return_uri("/admin/"); // true
+	 *	$this->_is_safe_return_uri("//evil.com"); // false
+	 */
+	function _is_safe_return_uri($uri){
+		$uri = (string)$uri;
+		if(!strlen($uri)){ return false; }
+		return $uri[0] === '/' && (strlen($uri) === 1 || $uri[1] !== '/');
+	}
+
+	/**
+	 * Returns current return uri
+	 *
+	 * In fact this returns a previously saved uri (by calling $this->_save_return_uri()), value of parameter _return_uri_ (eventually return_uri) or the http referer
+	 */
+	function _get_return_uri($default = "index",$options = []){
+		$options += [
+			"consider_referer" => true,
+		];
+
+		$key = md5($this->request->getRequestUri());
+		($return_uris = $this->session->g("return_uris")) || ($return_uris = []);
+
+		foreach([
+			$this->params->getString("_return_uri_"),
+			$this->params->getString("return_uri"),
+			isset($return_uris[$key]) ? $return_uris[$key] : null,
+		] as $candidate){
+			if($this->_is_safe_return_uri($candidate)){ return $candidate; }
+		}
+
+		if($options["consider_referer"] && ($referer = $this->request->getHttpReferer())){
+			$server_url = $this->request->getServerUrl();
+			if($server_url && strpos($referer,$server_url)===0){
+				$referer = substr($referer,strlen($server_url));
+			}
+			if($this->_is_safe_return_uri($referer)){ return $referer; }
+		}
+
+		return $default ? $this->_link_to($default) : null;
+	}
+
+	/**
+	 * Redirects user back to return_uri, when it is know.
+	 * Otherwise redirects to the $default.
+	 *
+	 * $this->_redirect_back(); // same as "index" :)
+	 * $this->_redirect_back("index");
+	 * $this->_redirect_back("books/index");
+	 * $this->_redirect_back([...));
+	 * $this->_redirect_back($this->_link_to([...)));
+	 * $this->_redirect_back("http://www.atk14.net");
+	 */
+	function _redirect_back($default = "index"){
+		$key = md5($this->request->getRequestUri());
+		($return_uris = $this->session->g("return_uris")) || ($return_uris = []);
+
+		$return_uri = "";
+
+		if(isset($return_uris[$key])){
+			$return_uri = $return_uris[$key]; // can be an empty string
+			unset($return_uris[$key]);
+			$this->session->s("return_uris",$return_uris);
+		}
+
+		if(!$return_uri){
+			$return_uri = $this->_get_return_uri($default);
+		}
+
+		return $this->_redirect_to($return_uri);
+	}
+
+	// ################### Methods for walking ############################################################################################################################### //
+
 	/**
 	 * This method is used for creating actions with multiple steps.
 	 *
 	 *
 	 * ```
-	 *	$this->_walk(array(
+	 *	$this->_walk([
 	 *		"get_domain_name",
 	 *		"get_data",
 	 *		"register",
@@ -1287,13 +1489,13 @@ class Atk14Controller{
 	 * vlozi se automaticky do action atributu formularu.
 	 *
 	 * ```
-	 *	$this->_walk(array(
+	 *	$this->_walk([
 	 *		"get_password",
 	 *		"rules_agreement",
 	 *		"confirm",
 	 *		"done",
 	 *		),
-	 *		array("extra_params" => array( "hashed_id" => $this->password_sender->getHashedId()))
+	 *		["extra_params" => [ "hashed_id" => $this->password_sender->getHashedId()))
 	 *	);
 	 * ```
 	 *
@@ -1301,10 +1503,10 @@ class Atk14Controller{
 	 * @param array $options Extra options
 	 * @access protected
 	 */
-	function _walk($steps,$options = array()){
-		$options = array_merge(array(
-			"extra_params" => array(),
-		),$options);
+	function _walk($steps,$options = []){
+		$options = array_merge([
+			"extra_params" => [],
+		],$options);
 
 		$steps = array_values($steps); // Conversion to indexed array
 
@@ -1313,31 +1515,31 @@ class Atk14Controller{
 		$this->walking_secret = ""; // e.g "8c6725e6c523e8321698cbb939549cc1"
 		$this->current_step_index = null; // 0, 1, 2...
 		$this->current_step_name = ""; // e.g. "get_password"
-		$this->form_data = array();
-		$this->returned_by = array();
+		$this->form_data = [];
+		$this->returned_by = [];
 
-		$this->_walking_extra_params = $options["extra_params"]; // pro nastaveni action atributu ve formularich
+		$this->_walking_extra_params = $options["extra_params"]; // for setting the action attribute in forms
 
 		$logging = 0;
 		$logger = &$this->logger;
 
-		if(preg_match("/^([a-f0-9]{32})-([0-9]{1,3})$/",(string)$this->request->getVar("step_id"),$matches)){
+		if(preg_match("/^([a-zA-Z0-9]{32})-([0-9]{1,3})$/",(string)$this->request->getVar("step_id"),$matches)){
 			$step_unique = $matches[1];
 			$request_index = (int)$matches[2];
 		}else{
-			$step_unique = md5(uniqid(rand()));
+			$step_unique = (string)String4::RandomString(32);
 			$request_index = 0;
 		}
 
 		// important to mix up current namespace/controller/action into the session name
 		$session_name = "step_{$step_unique}_".substr(md5($this->namespace.$this->controller.$this->action),16);
 		if(!$state = $this->session->getValue($session_name)){
-			$state = array(
+			$state = [
 				"current_step_index" => 0,
-				"form_data" => array(),
-				"returned_by" => array(),
+				"form_data" => [],
+				"returned_by" => [],
 				// "step_unique" 
-			);
+			];
 		}
 		$this->walking_state = &$state;
 		$state["step_unique"] = $step_unique;
@@ -1353,11 +1555,11 @@ class Atk14Controller{
 			// ale ted se pohybuje zase dopredu ->
 			// presmerujeme ho zpatky tam, kde ma byt :)
 			$logging && $logger->debug("redirecting to: $session_index");
-			return $this->_redirect_to(array_merge($this->_walking_extra_params,array("step_id" => "$step_unique-$session_index","step" => $steps[$session_index])));
+			return $this->_redirect_to(array_merge($this->_walking_extra_params,["step_id" => "$step_unique-$session_index","step" => $steps[$session_index]]));
 		}
 		if($session_index>$request_index){
-			// uzivatel se vraci zpet v prohlizeci ->
-			// kroky, ktere udelal drive zapomeneme
+			// user is navigating back in browser ->
+			// discard steps taken after the current position
 			for($i=$request_index;$i<=$session_index;$i++){
 				$logging && $logger->debug("unsetting: $i");
 				$_step = $steps[$i];
@@ -1367,10 +1569,8 @@ class Atk14Controller{
 			$session_index = $request_index;
 			$state["current_step_index"] = $request_index;
 			
-			// Volanim $this->__save_walking_state() lze upraveny $state ulozit, nicmene neni to nutne.
-			// Totiz ve chvili, kdy uzivatel odesle formular na nektere z minulych obrazovek, je $state ulozen.
-			// Nam se vlastne docela libi, ze uzivatel muze putovat v historii prohlizece sem a tam.
-			// $this->__save_walking_state($state);
+			// __save_walking_state() is intentionally not called here.
+			// State is saved when user submits a form, allowing free back/forward browser navigation.
 		}
 
 		$this->_execute_current_step();
@@ -1433,7 +1633,7 @@ class Atk14Controller{
 			$state = $this->_save_walking_state($ret);
 			$steps = $this->steps;
 
-			return $this->_redirect_to(array_merge($this->_walking_extra_params,array("step_id" => "$state[step_unique]-$state[current_step_index]","step" => $steps[$state["current_step_index"]])));
+			return $this->_redirect_to(array_merge($this->_walking_extra_params,["step_id" => "$state[step_unique]-$state[current_step_index]","step" => $steps[$state["current_step_index"]]]));
 		}
 	}
 
@@ -1445,13 +1645,13 @@ class Atk14Controller{
 
 		$this->step_id = "$step_unique-$step_index";
 
-		// pokud najdeme formular pro tento step, pouzijeme ho;
+		// if a form is found for this step, use it;
 		// jinak pouzijeme defaultni formik
 		($this->form = Atk14Form::GetInstanceByFilename("$this->controller/{$this->action}/{$step}_form",$this)) || ($this->form = Atk14Form::GetDefaultForm($this));
 
 		if(isset($this->form)){
 			$this->form->set_hidden_field("step_id",$this->step_id);
-			$this->form->set_action($this->_link_to($this->_walking_extra_params,array("connector" => "&")));
+			$this->form->set_action($this->_link_to($this->_walking_extra_params,["connector" => "&"]));
 		}
 
 		$method_name = "{$this->action}__$step";

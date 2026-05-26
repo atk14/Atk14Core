@@ -5,11 +5,12 @@
  * Controller tests are usually located in ./test/controllers/
  */
 class TcAtk14Controller extends TcAtk14Base{
-	var $namespace = "";
-	var $session = null;
-	var $client = null;
 
-	function __construct($name = NULL, array $data = array(), $dataName = ''){
+	public $namespace = "";
+	public $session = null;
+	public $client = null;
+
+	function __construct($name = NULL, array $data = [], $dataName = ''){
 		parent::__construct($name, $data, $dataName);
 
 		$this->session = $GLOBALS["ATK14_GLOBAL"]->getSession();

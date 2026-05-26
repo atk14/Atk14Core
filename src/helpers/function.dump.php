@@ -23,17 +23,17 @@ function smarty_function_dump($params,$template){
 	$smarty = atk14_get_smarty_from_template($template);
 
 	if(!in_array("var",array_keys($params))){
-		$out = array();
+		$out = [];
 		$out[] = "<ul>";
 		$keys = array_keys($smarty->getTemplateVars());
 		sort($keys);
 		foreach($keys as $key){
 			$out[] = '<li>';
-			$out[] = '<pre><code>'.h('$'.$key).': '.Dumper::Dump($smarty->getTemplateVars($key),0,array('collapse_structure' => true)).'</code></pre>';
+			$out[] = '<pre><code>'.h('$'.$key).': '.Dumper::Dump($smarty->getTemplateVars($key),0,['collapse_structure' => true]).'</code></pre>';
 			$out[] = '</li>';
 		}
 		$out[] = "</ul>";
-		return join("\n",$out);
+		return implode("\n",$out);
 	}
 	$out = isset($params["var"]) ? Dumper::Dump($params["var"]) : "NULL";
 	return "<pre><code>$out</code></pre>";
@@ -49,13 +49,13 @@ class Dumper{
 	 * echo Dumper::Dump(true); // [true]
 	 * echo Dumper::Dump(null); // NULL
 	 */
-	static function Dump($var,$offset = 0,$options = array()){
+	static function Dump($var,$offset = 0,$options = []){
 		$dumper = new Dumper();
 
 		return $dumper->_dump($var,$offset,$options);
 	}
 
-	function _dump($var,$offset,$options = array()){
+	function _dump($var,$offset,$options = []){
 		if(!isset($var)){
 			return $this->_Pad("NULL",$offset);
 		}
@@ -71,12 +71,12 @@ class Dumper{
 		return h($this->_Pad(print_r($var,true),$offset));	
 	}
 
-	function _DumpObject($obj,$offset,$options = array()){
-		$options += array(
+	function _DumpObject($obj,$offset,$options = []){
+		$options += [
 			"collapse_structure" => false,
-		);
+		];
 
-		if(is_a($obj,"Closure")){
+		if($obj instanceof Closure){
 			return $this->_Pad("Closure",$offset);
 		}
 
@@ -93,7 +93,7 @@ class Dumper{
 
 		if(isset($obj->_beeing_dumped_by_dumper)){ return $this->_Pad("[recursion]",$offset); }
 		$obj->_beeing_dumped_by_dumper = true;
-		$attrs = array();
+		$attrs = [];
 		foreach(array_keys(get_object_vars($obj)) as $attr){
 			if(preg_match('/^_/',$attr)){ continue; }
 			$attrs[] = $attr;
@@ -134,16 +134,16 @@ class Dumper{
 		// TODO: uf, to be rewritten somehow
 		$out[0] = '<span id="'.$id_to_be_hidden.'"><a href="#" onclick="JavaScript: document.getElementById(\''.$id.'\').style.display=\'inline\'; document.getElementById(\''.$id_to_be_hidden.'\').style.display=\'none\'; return false;" title="expand">'.$label.'(+)</a></span><span style="display:none;" id="'.$id.'"><a href="#" onclick="JavaScript: document.getElementById(\''.$id_to_be_hidden.'\').style.display=\'inline\'; document.getElementById(\''.$id.'\').style.display=\'none\'; return false;" title="collapse">'.$label.'(</a>';
 
-		$out[sizeof($out)-1] .= "</span>";
+		$out[count($out)-1] .= "</span>";
 	}
 
-	function _DumpArray($ar,$offset,$options = array()){
-		$options = array_merge(array(
+	function _DumpArray($ar,$offset,$options = []){
+		$options = array_merge([
 			"label" => "Array",
 			"collapse_structure" => false,
-		),$options);
+		],$options);
 
-		$out = array();
+		$out = [];
 		$out[] = $options["label"].'(';
 		foreach($ar as $k => $v){
 			$out[] = " [$k] => ".trim($this->_Pad($this->Dump($v),1));
@@ -163,6 +163,6 @@ class Dumper{
 		foreach($out as &$l){
 			$l = "{$padding}$l";
 		}
-		return join("\n",$out);
+		return implode("\n",$out);
 	}
 }

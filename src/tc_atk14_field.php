@@ -18,10 +18,11 @@
  * </code>
  */
 class TcAtk14Field extends TcAtk14Base{
-	var $field = null;
+
+	public $field = null;
 
 	/*
-	function __construct($name = NULL, array $data = array(), $dataName = ''){
+	function __construct($name = NULL, array $data = [), $dataName = ''){
 		parent::__construct($name, $data, $dataName);
 
 		$ref = new ReflectionClass("TcAtk14Base");
@@ -39,7 +40,7 @@ class TcAtk14Field extends TcAtk14Base{
 	 *
 	 * ```
 	 * function test(){
-	 *  $this->field = new IntegerField(array("required" => false));
+	 *  $this->field = new IntegerField(["required" => false));
 	 *  $cleaned_value = $this->assertValid(" 123 ");
 	 *  $this->assertEquals(123,$cleaned_value);
 	 * }
@@ -48,8 +49,9 @@ class TcAtk14Field extends TcAtk14Base{
 	function assertValid($value,$message = ""){
 		$cleaned_value = $this->clean($value,$err);
 		if(!is_null($err)){
-			$this->fail("not valid: $value [$err]" . ($message ? " ($message)" : ""));
+			$this->fail("not valid: ".$this->___stringifyValue($value)." [$err]" . ($message ? " ($message)" : ""));
 		}
+		$this->assertTrue(true); // On success, just one valid assertion is needed.
 		return $cleaned_value;
 	}
 
@@ -57,7 +59,7 @@ class TcAtk14Field extends TcAtk14Base{
 	 *
 	 * ```
 	 * function test(){
-	 *  $this->field = new IntegerField(array("required" => false));
+	 *  $this->field = new IntegerField(["required" => false));
 	 *  $err = $this->assertInvalid("abc");
 	 *  $this->assertEquals("Enter a number",$err);
 	 * }
@@ -66,8 +68,18 @@ class TcAtk14Field extends TcAtk14Base{
 	function assertInvalid($value,$message = null){
 		$cleaned_value = $this->clean($value,$err);
 		if(is_null($err)){
-			$this->fail("valid: $value [$cleaned_value]" . ($message ? " ($message)" : ""));
+			$this->fail("valid: ".$this->___stringifyValue($value)." [".$this->___stringifyValue($cleaned_value)."]" . ($message ? " ($message)" : ""));
 		}
+		$this->assertTrue(true); // On success, just one valid assertion is needed.
 		return $err;
+	}
+
+	private function ___stringifyValue($value){
+		if(is_object($value)){
+			if(method_exists($value,"__toString")){ return "$value"; }
+			if(method_exists($value,"toString")){ return $value->toString(); }
+			return "instance of ".get_class($value);
+		}
+		return "$value";
 	}
 }

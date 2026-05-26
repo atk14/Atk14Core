@@ -25,14 +25,14 @@
  * ```
  *	class LoginForm extends ApplicationForm{
  *		function set_up(){
- *			$this->add_field("login",new CharField(array(
+ *			$this->add_field("login",new CharField([
  *			"label" => _("Login"),
  *			"help_text" => _("client identification"),
  *			"min_length" => 1,
  *			"max_length" => 64
  *			)));
  *
- *			$this->add_field("password",new CharField(array(
+ *			$this->add_field("password",new CharField([
  *				"label" => _("Password"),
  *				"min_length" => 1,
  *				"max_length" => 64
@@ -127,7 +127,7 @@ class Atk14Form extends Form
 	 * Instance of controller using current form
 	 * @var Atk14Controller
 	 */
-	var $controller = null;
+	public $controller = null;
 
 	/**
 	 * Target URL
@@ -137,7 +137,7 @@ class Atk14Form extends Form
 	 * @access private
 	 * @var string
 	 */
-	var $atk14_action = "";
+	public $atk14_action = "";
 
 	/**
 	 * Data sent by user.
@@ -145,7 +145,7 @@ class Atk14Form extends Form
 	 * @access private
 	 * @var array
 	 */
-	var $atk14_data = null;
+	public $atk14_data = null;
 
 	/**
 	 * Array with hidden fields.
@@ -154,7 +154,7 @@ class Atk14Form extends Form
 	 * @var array
 	 *
 	 */
-	var $atk14_hidden_fields = array();
+	public $atk14_hidden_fields = [];
 
 	/**
 	 * Array with list of form attributes
@@ -162,7 +162,7 @@ class Atk14Form extends Form
 	 * @var array
 	 * @access private
 	 */
-	var $atk14_attrs = array();
+	public $atk14_attrs = [];
 
 	/**
 	 * Initial values
@@ -176,7 +176,7 @@ class Atk14Form extends Form
 	 *
 	 * @var array
 	 */
-	protected $atk14_constructor_options = array();
+	protected $atk14_constructor_options = [];
 
 	/**
 	 * Just a flag to prevent repeated call of _call_super_constructor() method
@@ -198,7 +198,7 @@ class Atk14Form extends Form
 	 * @var array
 	 * @todo mark as private
 	 */
-	var $atk14_errors = array();
+	public $atk14_errors = [];
 
 	/**
 	 * request method to send the form.
@@ -212,7 +212,7 @@ class Atk14Form extends Form
 	 *
 	 * @var bool
 	 */
-	var $atk14_csrf_protection_enabled = false;
+	public $atk14_csrf_protection_enabled = false;
 
 	/**
 	 * Constructor
@@ -224,23 +224,22 @@ class Atk14Form extends Form
 	 *
 	 * @todo complete options
 	 */
-	function __construct($options = array(),$controller = null)
+	function __construct($options = [],$controller = null)
 	{
 		global $HTTP_REQUEST;
 
 		$class_name = new String4(get_class($this));
 
-		$options = array_merge(array(
+		$options = array_merge([
 			"call_set_up" => true, // is this really used somewhere? TODO: to be removed
-			"attrs" => array(),
-		),$options);
+			"attrs" => [],
+		],$options);
 
 		$this->atk14_attrs = $options["attrs"];
 
 		$this->atk14_constructor_options = $options;
 
 		$this->atk14_action = $HTTP_REQUEST->getRequestURI();
-		//$this->atk14_action = Atk14Url::BuildLink(array()); // tohle sestavi URL s akt. $lang, $namespace, $controller a $action
 
 		$this->controller = $controller;
 
@@ -308,13 +307,13 @@ class Atk14Form extends Form
 	 * @see __construct()
 	 * @return Atk14Form
 	 */
-	static function GetInstanceByFilename($filename,$controller_obj = null,$options = array())
+	static function GetInstanceByFilename($filename,$controller_obj = null,$options = [])
 	{
 		global $ATK14_GLOBAL;
 
-		$options += array(
-			"attrs" => array(),
-		);
+		$options += [
+			"attrs" => [],
+		];
 
 		$filename = preg_replace('/\.(inc|php)$/','',$filename); // nechceme tam koncovku
 
@@ -324,21 +323,21 @@ class Atk14Form extends Form
 
 		$_action = preg_replace('/.*?([^\/]+)_form$/','\1',$filename);
 
-		$options["attrs"] += array(
+		$options["attrs"] += [
 			"id" => "form_{$controller}_{$_action}",
-		);
+		];
 
-		// toto je preferovane poradi ve vyhledavani souboru s formularem
-		$files = array(
+		// this is the preferred search order for the form file
+		$files = [
 		   "$path/$namespace/$filename",
 		   "$path/$namespace/$controller/$filename",
 		   "$path/$filename",
 		   "$filename",
-		);
+		];
 
 		$filename = null;
 		foreach($files as $_file){
-			foreach(array("php","inc") as $suffix){
+			foreach(["php","inc"] as $suffix){
 				if(file_exists("$_file.$suffix")){
 					$filename = "$_file.$suffix";
 					break;
@@ -357,19 +356,19 @@ class Atk14Form extends Form
 		if(strlen($classname)==0 || !file_exists($filename)){
 			return null;
 		}
-		// TODO: pokud je $filename napr. /path/to/a/project/app/forms/articles/create_new_form.php,
-		// melo by dojit i k automatickemu nahrani souboru (jestlize existuje) /path/to/a/project/app/forms/articles/articles.php
+		// TODO: if $filename is e.g. /path/to/a/project/app/forms/articles/create_new_form.php,
+		// the file /path/to/a/project/app/forms/articles/articles.php should also be auto-loaded (if it exists)
 		require_once($filename);
 
-		// toto je novinka - TODO: otestovat
+		// this is new - TODO: add tests
 		preg_match('/([^\/]+)\/+[^\/]+$/',$filename,$matches);
 		$_namespace = String4::ToObject($matches[1])->camelize()->toString(); // "app/forms/spam_filters/index_form.php" -> "SpamFilters"
-		// pokud existuje SpamFilters\IndexForm, je tento nazev tridy pouzit
+		// if SpamFilters\IndexForm exists, this class name is used
 		if(class_exists($_cn = "$_namespace\\$classname",false)){
 			$classname = $_cn;
 		}
-		// TODO: vice urovni namespaces - napr. Admin\SpamFilters\IndexForm
-		// TODO: vyresit (nebo neresit? :)) walking formulare
+		// TODO: support multiple namespace levels - e.g. Admin\SpamFilters\IndexForm
+		// TODO: handle (or not? :)) walking forms
 
 		$form = new $classname($options,$controller_obj);
 		return $form;
@@ -388,14 +387,14 @@ class Atk14Form extends Form
 	 * @param array $options see {@link Atk14Form::__construct()}
 	 * @return Atk14Form
 	 */
-	static function GetInstanceByControllerAndAction($controller,$action,$controller_obj = null,$options = array())
+	static function GetInstanceByControllerAndAction($controller,$action,$controller_obj = null,$options = [])
 	{
-		$options += array(
-			"attrs" => array(),
-		);
-		$options["attrs"] += array(
+		$options += [
+			"attrs" => [],
+		];
+		$options["attrs"] += [
 			"id" => "form_{$controller}_{$action}",
-		);
+		];
 
 		($form = Atk14Form::GetInstanceByFilename("$controller/{$controller}_{$action}_form.inc",$controller_obj,$options)) || 
 		($form = Atk14Form::GetInstanceByFilename("$controller/{$action}_form.inc",$controller_obj,$options));
@@ -413,7 +412,7 @@ class Atk14Form extends Form
 	 * @return Atk14Form instance of {@link Atk14Form}
 	 * @uses GetInstanceByControllerAndAction
 	 */
-	static function GetInstanceByController($controller,$options = array()){
+	static function GetInstanceByController($controller,$options = []){
 		return Atk14Form::GetInstanceByControllerAndAction($controller->controller,$controller->action,$controller,$options);
 	}
 
@@ -432,7 +431,7 @@ class Atk14Form extends Form
 	 * @param array $options {@see __construct}
 	 * @return Atk14Form
 	 */
-	static function GetForm($class_name,$controller = null,$options = array()){
+	static function GetForm($class_name,$controller = null,$options = []){
 		global $ATK14_GLOBAL;
 
 		$s = new String4($class_name);
@@ -442,7 +441,7 @@ class Atk14Form extends Form
 
 		//echo $ATK14_GLOBAL->getValue("controller")."/$filename.inc"; exit;
 
-		// zde se pokusime najit formik v adresari podle kontroleru a pokud nebude nalezen, zkusime o adresar vyse
+		// look for the form in the controller's directory; if not found, try one directory up
 		if(!$form = Atk14Form::GetInstanceByFilename("$controller_name/$filename",$controller,$options)){
 			$form = Atk14Form::GetInstanceByFilename("$filename",$controller,$options);
 		}
@@ -468,7 +467,7 @@ class Atk14Form extends Form
 				return $form;
 			}
 		}
-	  ($form = Atk14Form::GetForm("ApplicationForm",$controller)) || ($form = new Atk14Form(array(),$controller));
+	  ($form = Atk14Form::GetForm("ApplicationForm",$controller)) || ($form = new Atk14Form([],$controller));
 	  return $form;
 	}
 
@@ -485,7 +484,7 @@ class Atk14Form extends Form
 	 */
 	function validate($data)
 	{
-		if(!isset($data)){ $data = array(); }
+		if(!isset($data)){ $data = []; }
 		if($this->is_valid($data)){
 			return $this->cleaned_data;
 		}
@@ -524,20 +523,27 @@ class Atk14Form extends Form
 		$super_constructor_called = $this->_call_super_constructor();
 
 		if(isset($data) && !$super_constructor_called){
-			$this->__do_big_initialization(array(
+			$this->__do_big_initialization([
 				"data" => $this->atk14_data, // $this->atk14_data is set in set_data() method
-			));
+			]);
 		}
 		
 		$out = parent::is_valid();
 
 		if(
 			$out &&
-			$this->atk14_csrf_protection_enabled &&
-			!in_array((string)$HTTP_REQUEST->getVar("_csrf_token_","PG"),$this->get_valid_csrf_tokens())
+			$this->atk14_csrf_protection_enabled
 		){
-			$this->set_error(_("Please, submit the form again"));
-			$out = false;
+			$valid = false;
+			foreach($this->get_valid_csrf_tokens() as $valid_token){
+				if(hash_equals($valid_token,(string)$HTTP_REQUEST->getVar("_csrf_token_","PG"))){
+					$valid = true;
+				}
+			}
+			if(!$valid){
+				$this->set_error(_("Please, submit the form again"));
+				$out = false;
+			}
 		}
 
 		return $out;
@@ -616,7 +622,7 @@ class Atk14Form extends Form
 	 *
 	 * Data can be passed as array
 	 * ```
-	 *	$_POST = array(
+	 *	$_POST = [
 	 *		"id" => "143",
 	 *	)
 	 *	$form->set_data($_POST);
@@ -655,7 +661,7 @@ class Atk14Form extends Form
 	 * This method recognizes several formats of the $url parameter:
 	 * - array - here you can specify all parameters recognized by {@link Atk14Url::BuildLink()}
 	 * ```
-	 * $form->set_action(array(
+	 * $form->set_action([
 	 * 	"controller" => "customer",
 	 * 	"action" => "login"
 	 * ));
@@ -682,7 +688,7 @@ class Atk14Form extends Form
 	 */
 	function set_action($url)
 	{
-		$url = Atk14Url::BuildLink($url,array("connector" => "&"));
+		$url = Atk14Url::BuildLink($url,["connector" => "&"]);
 		$this->atk14_action = (string)$url;
 	}
 
@@ -754,10 +760,10 @@ class Atk14Form extends Form
 		}
 
 		if(is_null($this->fields)){
-			return array();
+			return [];
 		}
 
-		$out = array();
+		$out = [];
 		$keys = array_keys($this->fields);
 		foreach($keys as $key){
 			$out[$key] = $this->get_initial($key);
@@ -778,7 +784,7 @@ class Atk14Form extends Form
 	 * You can also set up initial values of more fields by using several types of object.
 	 * - array
 	 * ```
-	 *	$this->set_initial(array(
+	 *	$this->set_initial([
 	 *		"login" => "karel.kulek",
 	 *		"password" => "heslicko"
 	 *	));
@@ -797,11 +803,11 @@ class Atk14Form extends Form
 	 */
 	function set_initial($key_or_values,$value = null)
 	{
-		if(is_string($key_or_values)){ return $this->set_initial(array("$key_or_values" => $value)); }
+		if(is_string($key_or_values)){ return $this->set_initial(["$key_or_values" => $value]); }
 		if(is_object($key_or_values)){ return $this->set_initial($key_or_values->toArray()); }
 		if(is_null($key_or_values)){ return; }
 
-		if(!isset($this->atk14_initial_values)){ $this->atk14_initial_values = array(); }
+		if(!isset($this->atk14_initial_values)){ $this->atk14_initial_values = []; }
 		$this->atk14_initial_values = array_merge($this->atk14_initial_values,$key_or_values);
 
 		foreach($key_or_values as $k => $v){
@@ -824,7 +830,7 @@ class Atk14Form extends Form
 	 *
 	 * Setting multiple hidden fields:
 	 * ```
-	 *	$form->set_hidden_field(array(
+	 *	$form->set_hidden_field([
 	 *		"step" => "1",
 	 *		"session_id" => "33skls"
 	 *	));
@@ -836,7 +842,7 @@ class Atk14Form extends Form
 	 */
 	function set_hidden_field($key_or_values,$value = null)
 	{
-		if(is_string($key_or_values)){ return $this->set_hidden_field(array($key_or_values => $value)); }
+		if(is_string($key_or_values)){ return $this->set_hidden_field([$key_or_values => $value]); }
 
 		foreach($key_or_values as $k => $v){
 			if(is_object($v)){ $key_or_values[$k] = $v->getId(); }
@@ -855,7 +861,7 @@ class Atk14Form extends Form
 	 *
 	 * Setting multiple attributes:
 	 * ```
-	 *	$form->set_attr(array(
+	 *	$form->set_attr([
 	 *		"enctype" => "multipart/form-data",
 	 *		"class" => "form_common"
 	 *	));
@@ -867,7 +873,7 @@ class Atk14Form extends Form
 	 */
 	function set_attr($key_or_values,$value = null)
 	{
-		if(is_string($key_or_values)){ return $this->set_attr(array($key_or_values => $value)); }
+		if(is_string($key_or_values)){ return $this->set_attr([$key_or_values => $value]); }
 
 		$this->atk14_attrs = array_merge($this->atk14_attrs,$key_or_values);
 	}
@@ -965,8 +971,8 @@ class Atk14Form extends Form
 	 */
 	function end()
 	{
-		$out = array();
-		if(sizeof($this->atk14_hidden_fields)){
+		$out = [];
+		if(count($this->atk14_hidden_fields)){
 			$out[] = "<div>";
 			foreach($this->atk14_hidden_fields as $_key => $_value)
 			{
@@ -975,7 +981,7 @@ class Atk14Form extends Form
 			$out[] = "</div>";
 		}
 		$out[] = "</form>";
-		return join("\n",$out);
+		return implode("\n",$out);
 	}
 
 	/**
@@ -1016,8 +1022,8 @@ class Atk14Form extends Form
 			return;
 		}
 
-		if(!isset($this->errors)){ $this->errors = array(); }
-		if(!isset($this->errors[$field_name])){ $this->errors[$field_name] = array(); }
+		if(!isset($this->errors)){ $this->errors = []; }
+		if(!isset($this->errors[$field_name])){ $this->errors[$field_name] = []; }
 		$this->errors[$field_name][] = $error_message;
 	}
 
@@ -1044,14 +1050,14 @@ class Atk14Form extends Form
 	 */
 	function get_errors($on_field = null){
 		 $out = parent::get_errors();
-		 if(!isset($out[""]) && sizeof($this->atk14_errors)>0){
-			 $out[""] = array();
+		 if(!isset($out[""]) && count($this->atk14_errors)>0){
+			 $out[""] = [];
 		 }
-		 if(sizeof($this->atk14_errors)>0){
+		 if(count($this->atk14_errors)>0){
 			 $out[""] = array_merge($out[""],$this->atk14_errors);
 		 }
 		 if(isset($on_field)){
-			if(!isset($out[$on_field])){ $out[$on_field] = array(); }
+			if(!isset($out[$on_field])){ $out[$on_field] = []; }
 			return $out[$on_field];
 		 }
 		 return $out;
@@ -1091,7 +1097,7 @@ class Atk14Form extends Form
 	 */
 	function has_errors()
 	{
-		return (sizeof($this->get_errors())>0);
+		return (count($this->get_errors())>0);
 	}
 
 	/**
@@ -1102,22 +1108,22 @@ class Atk14Form extends Form
 	function get_error_report()
 	{
 		if(!$this->has_errors()){ return ""; }
-		$out = array();
+		$out = [];
 		$out[] = "<div class=\"errorExplanation\">";
 		$out[] = "<h3>$this->atk14_error_title</h3>";
 		$out[] = "<ul>";
 		$errors = $this->get_errors();
 		foreach($errors as $_key => $_messages){
-			if(sizeof($_messages)==0){ continue; }
+			if(count($_messages)==0){ continue; }
 			$_prefix = "";
 			if(isset($this->fields[$_key])){
 			  $_prefix = $this->fields[$_key]->label.": ";
 			}
-			$out[] = "<li>$_prefix".join("</li>\n<li>$_prefix",$_messages)."</li>";
+			$out[] = "<li>$_prefix".implode("</li>\n<li>$_prefix",$_messages)."</li>";
 		}
 		$out[] = "</ul>";
 		$out[] = "</div>";
-		return join("\n",$out);
+		return implode("\n",$out);
 	}
 
 	/**
@@ -1127,9 +1133,9 @@ class Atk14Form extends Form
 	 * @return BoundField
 	 */
 	function get_field($name){
-	// !!! je dulezite pred volanim get_field() volat konstruktor rodice.
-	// !!! jinak by nebyl formular ($this) zinicialozovan (chybela by napr vlastnost $this->auto_id)
-	// !!! a te je dulezita pri volani:
+	// !!! parent constructor must be called before get_field().
+	// !!! otherwise the form ($this) would not be initialized (e.g. $this->auto_id would be missing),
+	// !!! which is needed when calling:
 	// !!!   $field = $form->get_field("name");
 	// !!!   echo $field->label_tag();
 		$this->_call_super_constructor();
@@ -1150,7 +1156,7 @@ class Atk14Form extends Form
 	function get_fields(){
 		$this->_call_super_constructor();
 
-		$fields = array();
+		$fields = [];
 		foreach($this->get_field_keys() as $key){
 			$fields[$key] = $this->get_field($key);
 		}
@@ -1247,7 +1253,7 @@ class Atk14Form extends Form
 		global $HTTP_REQUEST,$ATK14_GLOBAL;
 		$session = $ATK14_GLOBAL->getSession();
 
-		$out = array();
+		$out = [];
 
 		if(defined("TEST") && TEST){
 			// This token can be valid only in testing environment.
@@ -1258,7 +1264,11 @@ class Atk14Form extends Form
 		$t = floor(time()/(60 * 5));
 		for($i=0;$i<=1;$i++){
 			$_t = $t - $i;
-			$out[] = sha1($_t.SECRET_TOKEN.get_class($this).$HTTP_REQUEST->getRemoteAddr().$session->getSecretToken());
+			$out[] = hash_hmac("sha256", implode("|",[
+				$_t,
+				get_class($this),
+				$session->getSecretToken(),
+			]), SECRET_TOKEN);
 		}
 
 		return $out;
